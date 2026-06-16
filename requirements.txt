@@ -1,0 +1,8 @@
+streamlit
+pandas
+numpy
+openpyxl
+networkx
+scikit-fuzzy
+folium
+streamlit-folium
