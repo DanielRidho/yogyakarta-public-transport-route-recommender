@@ -1,6 +1,4 @@
-# ================================================================
 # Dijkstra Multi-Kriteria + Fuzzy + Traffic Jam
-# ================================================================
 
 import math
 import heapq
@@ -18,9 +16,7 @@ from schedule_utils import (
 from fare_utils import calculate_fare
 
 
-# ============================================================
 # KONSTANTA WAKTU REAL
-# ============================================================
 INTERMODAL_PENALTY   = 3.0
 ROUTE_CHANGE_PENALTY = 2.0
 TRANSFER_TAP_PENALTY = 1.0
@@ -31,9 +27,7 @@ W_COST     = 0.33
 W_TRANSFER = 0.34
 
 
-# ============================================================
 # UTILITAS KECIL
-# ============================================================
 def _corridor_from_route_id(rid: Any) -> Any:
     if isinstance(rid, str):
         return rid.split("_")[0]
@@ -64,9 +58,7 @@ def _is_dominated(candidate: Label, labels: List[Label]) -> bool:
     return any(_dominates(l, candidate) for l in labels)
 
 
-# ============================================================
 # MC-DIJKSTRA
-# ============================================================
 def _mc_dijkstra(G, source, target, max_labels_per_node=30):
     labels = {}
     heap = []
@@ -131,9 +123,7 @@ def k_shortest_paths_by_time(G, source, target, k=6):
     return [_reconstruct_path(l) for l in labs_sorted[:k]]
 
 
-# ============================================================
 # GROUP SEGMENT
-# ============================================================
 def _group_segments(G, path):
     if len(path) < 2:
         return []
@@ -168,9 +158,7 @@ def _group_segments(G, path):
     return segs
 
 
-# ============================================================
 # WAKTU REAL + MACET
-# ============================================================
 def compute_time(
     G,
     path,
@@ -275,9 +263,7 @@ def compute_time(
     return round(total, 2), details
 
 
-# ============================================================
 # FUZZY NORMALISASI
-# ============================================================
 def _min_max_norm(vals):
     if not vals:
         return []
@@ -355,9 +341,7 @@ def _fuzzy_eff(time_n, cost_n, trans_n):
     return 0.0 if den == 0 else (num / den) * 100.0
 
 
-# ============================================================
 # EVALUASI + FUZZY + MACET
-# ============================================================
 def evaluate_paths(
     G,
     paths,

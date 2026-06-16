@@ -17,9 +17,7 @@ INTERMODAL_PENALTY   = 3.0
 DIRECT_ROUTE_BONUS   = -1.0     
 
 
-# =========================================================
 # Kandidat jalur berdasarkan travel_time statis di graf
-# =========================================================
 def k_shortest_paths_by_time(G, source, target, k=3):
     """
     Cari K rute terpendek berdasar atribut 'travel_time' di graf.
@@ -37,9 +35,7 @@ def k_shortest_paths_by_time(G, source, target, k=3):
     return sorted(paths, key=path_time)[:k]
 
 
-# =========================================================
 # Group edge menjadi segmen per (mode, route_id)
-# =========================================================
 def _group_segments(G, path):
     """
     Gabungkan edge-edge bertetangga yang punya mode & route_id sama
@@ -76,9 +72,7 @@ def _group_segments(G, path):
     return segs
 
 
-# =========================================================
 # Hitung waktu perjalanan REAL (jadwal + penalti + macet)
-# =========================================================
 def compute_time(
     G,
     path,
@@ -194,9 +188,7 @@ def compute_time(
     return round(total, 2), details
 
 
-# =========================================================
 # Evaluasi waktu + biaya + transfer (tanpa fuzzy)
-# =========================================================
 def evaluate_paths(
     G,
     paths,

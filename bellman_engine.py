@@ -15,9 +15,7 @@ ROUTE_CHANGE_PENALTY = 2.0
 INTERMODAL_PENALTY   = 3.0
 DIRECT_ROUTE_BONUS   = -1.0
 
-# =========================================================
 # Bellman–Ford
-# =========================================================
 def _bf_one(G, source, target):
     dist = {n: math.inf for n in G.nodes()}
     parent = {n: None for n in G.nodes()}
@@ -47,16 +45,13 @@ def _bf_one(G, source, target):
         cur = parent[cur]
     return list(reversed(path))
 
-# =========================================================
 # Generate k paths
-# =========================================================
 def k_shortest_paths_by_time(G, source, target, k=3):
     sols = []
     used_edge_penalty = {}
 
     for _ in range(max(6, k)):
 
-        # apply edge penalties
         for (u,v),pen in used_edge_penalty.items():
             if G.has_edge(u,v):
                 G[u][v]["_temp_added"] = pen
@@ -87,9 +82,7 @@ def k_shortest_paths_by_time(G, source, target, k=3):
 
     return sorted(sols, key=path_cost)[:k]
 
-# =========================================================
 # group segments
-# =========================================================
 def _group_segments(G, path):
     edges = list(zip(path[:-1], path[1:]))
     segs, i = [], 0
@@ -114,9 +107,7 @@ def _group_segments(G, path):
         i = j+1
     return segs
 
-# =========================================================
 # compute_time
-# =========================================================
 def compute_time(G, path, routes_df, timetables_df, stops_df,
                  start_minute, current_day, traffic_rules_df=None):
     segs = _group_segments(G, path)
@@ -210,9 +201,7 @@ def compute_time(G, path, routes_df, timetables_df, stops_df,
 
     return round(total,2), details
 
-# =========================================================
 # evaluate_paths
-# =========================================================
 def evaluate_paths(G, paths, payment_pref, fares_df, fare_rules_df,
                    stops_df, routes_df, timetables_df, start_minute,
                    current_day, traffic_rules_df=None):

@@ -94,8 +94,8 @@ def build_graph(
     traffic_rules_df: Optional[pd.DataFrame] = None,
 ):
 
-    # ================= 1) PREPROCESS TRAFFIC RULES ===================
-    traffic_map = {}  # route_id → list faktor
+    # PREPROCESS TRAFFIC RULES
+    traffic_map = {}
     if traffic_rules_df is not None and not traffic_rules_df.empty:
         for _, r in traffic_rules_df.iterrows():
             rid = r["route_id"]
@@ -109,16 +109,16 @@ def build_graph(
         avg = sum(traffic_map[rid]) / len(traffic_map[rid])
         return base_time * avg
 
-    # ================= 2) CROSSWALK OTOMATIS ==========================
+    # CROSSWALK OTOMATIS
     cross = _auto_crosswalks(stops_df, crosswalk_threshold_m)
     if not cross.empty:
         edges_df = pd.concat([edges_df, cross], ignore_index=True)
 
-    # ================= 3) STOP SEQUENCE UNTUK KERETA ==================
+    # STOP SEQUENCE UNTUK KERETA
     stop_seq_lookup = _build_stop_sequence_lookup(timetables_df)
     rail_modes = {"krl", "prameks", "railink"}
 
-    # ================= 4) BUILD GRAPH ============================
+    # BUILD GRAPH
     G = nx.DiGraph()
     _attach_node_pos(G, stops_df)
 
@@ -168,7 +168,7 @@ def build_graph(
             direction=edir_val if isinstance(edir_val, str) else None,
         )
 
-    # ================= 5) ACCESS EDGES ============================
+    #ACCESS EDGES
     if access_edges:
         for e in access_edges:
             u, v = e["u_stop_id"], e["v_stop_id"]
