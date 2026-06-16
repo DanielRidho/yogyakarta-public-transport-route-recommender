@@ -29,10 +29,7 @@ from dijkstra_fuzzy_engine import (
     k_shortest_paths_by_time as dijkstra_fz_paths,
     evaluate_paths as eval_dijkstra_fz,
 )
-
-# ======================================================================
 # CONFIG
-# ======================================================================
 st.set_page_config(page_title="Hybrid Multimoda Routing", layout="wide")
 st.title("🧭 Sistem Rekomendasi Rute Transportasi Multimoda")
 st.caption("Yogyakarta • TJ • KRL • Prameks • Railink • YIA Ekspres")
@@ -44,9 +41,7 @@ MAX_DISPLAY_CANDIDATES    = 6
 ARRIVAL_SEARCH_WINDOW_MIN = 120
 ARRIVAL_SEARCH_STEP_MIN   = 5
 
-# ======================================================================
 # LOAD DATA
-# ======================================================================
 data = load_dataset()
 
 stops            = data["stops"]
@@ -55,7 +50,7 @@ edges_df         = data["edges"]
 fares_df         = data["fares"]
 fare_rules_df    = data["fare_rules"]
 timetables_df    = data["timetables"]
-traffic_rules_df = data["traffic_rules"]   # 🔥 DITAMBAHKAN
+traffic_rules_df = data["traffic_rules"]
 
 STOP_XY = {row["stop_id"]: (row["lat"], row["lon"]) for _, row in stops.iterrows()}
 
@@ -79,9 +74,7 @@ MODE_COLOR_DEFAULT = {
     "bus": "#ef4444",
 }
 
-# ======================================================================
 # SESSION STATE INIT
-# ======================================================================
 for key, default in {
     "origin": None,
     "destination": None,
@@ -91,9 +84,7 @@ for key, default in {
     if key not in st.session_state:
         st.session_state[key] = default
 
-# ======================================================================
 # HELPERS
-# ======================================================================
 def stop_name(stop_id):
     row = stops[stops["stop_id"] == stop_id]
     return row.iloc[0]["name"] if not row.empty else str(stop_id)
@@ -137,9 +128,7 @@ def choose_best_and_candidates(cands, algo_is_fuzzy: bool):
         )[0]
     return best, cands_display
 
-# ======================================================================
 # ENGINE MAP
-# ======================================================================
 ENGINE_MAP = {
     "Dijkstra (Baseline)":      (dijkstra_paths,    eval_dijkstra,    False),
     "A* (Baseline)":            (astar_paths,       eval_astar,       False),
@@ -153,9 +142,7 @@ BASELINE_ALGOS = [
     "Bellman-Ford (Baseline)",
 ]
 
-# ======================================================================
 # SIDEBAR UI
-# ======================================================================
 with st.sidebar:
     st.header("⚙️ Panel Pengaturan")
 
@@ -195,9 +182,7 @@ with st.sidebar:
 
     st.radio("Klik peta untuk memilih:", ["Origin","Destination"], key="selection_mode")
 
-# ======================================================================
 # INPUT MAP
-# ======================================================================
 m = folium.Map(location=[-7.79,110.37], zoom_start=12)
 
 if st.session_state.origin:
@@ -217,9 +202,7 @@ if ret and ret.get("last_clicked"):
     else:
         st.session_state.destination = (lat,lon)
 
-# ======================================================================
 # RUNTIME BASELINE
-# ======================================================================
 def measure_baseline_runtimes(G, start_minute_used, day_name_used):
     stats = {}
 
@@ -256,9 +239,7 @@ def measure_baseline_runtimes(G, start_minute_used, day_name_used):
 
     return stats
 
-# ======================================================================
 # ROUTE COMPUTATION
-# ======================================================================
 def compute_route():
     path_fn, eval_fn, algo_is_fuzzy = ENGINE_MAP[alg_choice]
 
@@ -413,16 +394,12 @@ def compute_route():
         baseline_best_for_fuzzy=baseline_best_for_fuzzy,
     )
 
-# ======================================================================
 # BUTTON
-# ======================================================================
 if st.button("⚡ Cari Rute", disabled=not(st.session_state.origin and st.session_state.destination)):
     with st.spinner("Menghitung rute..."):
         compute_route()
 
-# ======================================================================
 # OUTPUT
-# ======================================================================
 if not st.session_state.result:
     st.info("🗺️ Klik peta → pilih titik → tekan Cari Rute")
     st.stop()
@@ -438,9 +415,7 @@ actual_arrival = result["actual_arrival"]
 runtime_stats = result.get("runtime_stats", {})
 baseline_best_for_fuzzy = result.get("baseline_best_for_fuzzy")
 
-# ======================================================================
 # SUMMARY
-# ======================================================================
 st.subheader(f"📌 Hasil Terbaik — {algo}")
 
 col1,col2,col3,col4 = st.columns(4)
@@ -461,9 +436,7 @@ else:
         f"Saran berangkat: **{dep_label}** → tiba **{arr_label}**."
     )
 
-# ======================================================================
 # MAP OUTPUT
-# ======================================================================
 olat,olon = st.session_state.origin
 dlat,dlon = st.session_state.destination
 
@@ -513,9 +486,7 @@ for n in used_nodes:
 st.subheader("🗺️ Visualisasi Rute")
 st_folium(mout, height=420, use_container_width=True)
 
-# ======================================================================
 # DETAIL TABLE
-# ======================================================================
 st.subheader("📋 Rincian Waktu Perjalanan")
 
 detail_rows=[]
@@ -543,9 +514,7 @@ for i,seg in enumerate(best["segments"], start=1):
 
 st.dataframe(pd.DataFrame(detail_rows), use_container_width=True)
 
-# ======================================================================
 # FUZZY CANDIDATES
-# ======================================================================
 if is_fuzzy:
     st.subheader("🧮 Kandidat Rute (Dijkstra Fuzzy)")
     dfc = pd.DataFrame([{
@@ -557,9 +526,7 @@ if is_fuzzy:
     } for i,r in enumerate(cands_display)])
     st.dataframe(dfc, use_container_width=True)
 
-# ======================================================================
 # RUNTIME BASELINE
-# ======================================================================
 if runtime_stats:
     with st.expander("⏱️ Perbandingan Runtime Algoritma Baseline"):
         rows=[]
