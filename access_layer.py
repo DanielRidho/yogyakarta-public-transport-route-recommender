@@ -1,12 +1,3 @@
-"""
-access_layer.py
-Membangun koneksi akses antara pengguna dan jaringan transportasi multimoda (halte, stasiun, dll)
-Termasuk:
-- Multi-halte access (bisa ke >1 halte terdekat)
-- Direct walk (origin -> destination jika dekat)
-- Limiter jarak maksimum jalan kaki
-"""
-
 import math
 from typing import List, Dict
 
@@ -31,7 +22,7 @@ def _haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
 def _walk_time_min(distance_m: float) -> float:
     return max(MIN_WALK_TIME_MIN, round(distance_m / WALK_SPEED_M_PER_MIN, 2))
 
-# ====================== AKSES USER → HALTE ======================
+# ====================== AKSES USER KE HALTE ======================
 def generate_access_edges(
     user_node_id: str,
     lat: float,
