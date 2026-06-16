@@ -1,6 +1,10 @@
 folium==0.20.0
 networkx==3.2.1
-numpy==2.4.6
-pandas==3.0.3
+numpy==1.26.4
+pandas==2.2.2
 streamlit==1.32.0
-streamlit_folium==0.27.2
+streamlit-folium==0.27.2
+openpyxl==3.1.5
+geopy
+shapely
+scikit-fuzzy
