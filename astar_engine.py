@@ -16,9 +16,7 @@ ROUTE_CHANGE_PENALTY = 2.0
 INTERMODAL_PENALTY   = 3.0
 DIRECT_ROUTE_BONUS   = -1.0
 
-# =========================================================
 # Haversine heuristic
-# =========================================================
 def _haversine(a, b):
     if ("lat" not in a) or ("lat" not in b):
         return 0.0
@@ -33,9 +31,7 @@ def _haversine(a, b):
     )
     return R * 2 * math.atan2(math.sqrt(x), math.sqrt(1-x)) / 80.0  # 4.8 km/h
 
-# =========================================================
-# A* pathfinder (single best path)
-# =========================================================
+# A* pathfinder
 def _astar_one(G, source, target):
     open_set = []
     heapq.heappush(open_set, (0, source, [source], 0))
@@ -61,29 +57,23 @@ def _astar_one(G, source, target):
 
     return None
 
-# =========================================================
-# Generate K routes by repeatedly penalizing used edges
-# =========================================================
 def k_shortest_paths_by_time(G, source, target, k=3):
     sols = []
     used_edge_penalty = {}
 
     for _ in range(max(6, k)):
-        # mutate edge weights temporarily
         for (u, v) in used_edge_penalty:
             if G.has_edge(u, v):
                 G[u][v]["_temp_added"] = used_edge_penalty[(u, v)]
             else:
                 G[u][v]["_temp_added"] = 0.0
 
-        # run A*
         for _, v, d in G.edges(data=True):
             d["travel_time_backup"] = d["travel_time"]
             d["travel_time"] = d["travel_time_backup"] + d.get("_temp_added",0)
 
         p = _astar_one(G, source, target)
 
-        # restore weights
         for _, v, d in G.edges(data=True):
             d["travel_time"] = d["travel_time_backup"]
 
@@ -92,7 +82,6 @@ def k_shortest_paths_by_time(G, source, target, k=3):
 
         sols.append(p)
 
-        # penalize edges on this solution
         for u, v in zip(p[:-1], p[1:]):
             used_edge_penalty[(u, v)] = used_edge_penalty.get((u, v), 0.0) + 999
 
@@ -104,9 +93,7 @@ def k_shortest_paths_by_time(G, source, target, k=3):
 
     return sorted(sols, key=path_cost)[:k]
 
-# =========================================================
 # group segments
-# =========================================================
 def _group_segments(G, path):
     edges = list(zip(path[:-1], path[1:]))
     segs, i = [], 0
@@ -131,12 +118,9 @@ def _group_segments(G, path):
         i = j+1
     return segs
 
-# =========================================================
 # compute_time
-# =========================================================
 def compute_time(G, path, routes_df, timetables_df, stops_df,
                  start_minute, current_day, traffic_rules_df=None):
-    # EXACT COPY OF DIJKSTRA VERSION
     segs = _group_segments(G, path)
     current = float(start_minute)
     total = 0.0
@@ -220,9 +204,7 @@ def compute_time(G, path, routes_df, timetables_df, stops_df,
 
     return round(total,2), details
 
-# =========================================================
 # evaluate_paths
-# =========================================================
 def evaluate_paths(G, paths, payment_pref, fares_df, fare_rules_df,
                    stops_df, routes_df, timetables_df, start_minute,
                    current_day, traffic_rules_df=None):
