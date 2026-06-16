@@ -1,18 +1,14 @@
 import pandas as pd
 import math
 
-# ======================================================
 # Penentu weekday/weekend
-# ======================================================
 def get_day_type(day_name):
     if day_name in ["Saturday", "Sunday"]:
         return "weekend"
     return "weekday"
 
 
-# ======================================================
 # Ambil multiplier dari traffic_rules_df
-# ======================================================
 def get_traffic_multiplier(current_minute, day_name, traffic_rules_df):
     if traffic_rules_df is None or traffic_rules_df.empty:
         return 1.0
@@ -32,9 +28,7 @@ def get_traffic_multiplier(current_minute, day_name, traffic_rules_df):
     return 1.0  # default no congestion
 
 
-# -------------------------------
 # Cek jam operasi rute
-# -------------------------------
 def in_service_window(routes_df, route_id, current_minute):
     r = routes_df[routes_df["route_id"] == route_id]
     if r.empty:
@@ -49,9 +43,7 @@ def in_service_window(routes_df, route_id, current_minute):
     return (start <= current_minute <= end)
 
 
-# -----------------------------------------
 # Cek apakah KA aktif di hari ini
-# -----------------------------------------
 def is_train_operating(trainno, current_day):
     if not isinstance(trainno, str):
         return True
@@ -62,9 +54,7 @@ def is_train_operating(trainno, current_day):
     return True
 
 
-# -------------------------------------------------
 # Hitung waktu tunggu kereta/bus berikutnya
-# -------------------------------------------------
 def next_departure_wait_min(route_id, stop_id, timetables_df, current_minute, current_day,
                             routes_df=None, mode=None):
     # Jadwal kereta (prioritas)
@@ -106,9 +96,7 @@ def next_departure_wait_min(route_id, stop_id, timetables_df, current_minute, cu
     return 10.0
 
 
-# ----------------------------------------------------
 # Ambil waktu kedatangan & keberangkatan kereta
-# ----------------------------------------------------
 def get_train_schedule_segment(route_id, timetables_df, current_day):
     if timetables_df is None or timetables_df.empty:
         return []
