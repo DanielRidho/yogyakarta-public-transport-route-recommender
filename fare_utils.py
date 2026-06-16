@@ -6,7 +6,6 @@ def calculate_fare(mode, route_id, fares_df, fare_rules_df, payment_type,
     if mode == "walk":
         return 0.0
 
-    # Ambil baris tarif yang cocok
     fare_row = fares_df[
         (fares_df["mode"].str.lower() == mode.lower()) &
         (
@@ -23,7 +22,6 @@ def calculate_fare(mode, route_id, fares_df, fare_rules_df, payment_type,
     fare_id = fare_row.iloc[0]["fare_id"]
     rules = fare_rules_df[fare_rules_df["fare_id"] == fare_id]
 
-    # Kasus khusus Railink (rule-based fare)
     if mode == "railink" and not rules.empty:
         rs = rules
         if u_stop and v_stop:
@@ -41,7 +39,6 @@ def calculate_fare(mode, route_id, fares_df, fare_rules_df, payment_type,
         fmax = float(rs["fare_max"].max() or base_fare)
         return (fmin + fmax) / 2.0
 
-    # Kasus rule-based umum
     if not rules.empty:
         rs3 = rules[
             ((rules["origin_stop_id"] == u_stop) & (rules["destination_stop_id"] == v_stop))
@@ -55,13 +52,8 @@ def calculate_fare(mode, route_id, fares_df, fare_rules_df, payment_type,
             fmax = float(rs3.iloc[0].get("fare_max", base_fare))
             return (fmin + fmax) / 2.0
 
-    # Default: flat fare
     return base_fare
 
-
-# ==============================================================
-# FUNGSI TAMBAHAN: Ambil batas maksimum tarif per moda
-# ==============================================================
 
 def get_max_fare_by_mode(mode, fares_df, fare_rules_df):
     if mode in ["railink"]:
@@ -91,9 +83,7 @@ def get_max_fare_by_mode(mode, fares_df, fare_rules_df):
     return 15000
 
 
-# ==============================================================
 # Normalisasi biaya ke domain fuzzy (0–15000)
-# ==============================================================
 
 def normalize_cost_for_fuzzy(mode, total_cost, fares_df, fare_rules_df):
     if mode == "walk":
