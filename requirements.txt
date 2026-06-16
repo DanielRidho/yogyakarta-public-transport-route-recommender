@@ -1,8 +1,6 @@
-streamlit
-pandas
-numpy
-openpyxl
-networkx
-scikit-fuzzy
-folium
-streamlit-folium
+folium==0.20.0
+networkx==3.2.1
+numpy==2.4.6
+pandas==3.0.3
+streamlit==1.32.0
+streamlit_folium==0.27.2
